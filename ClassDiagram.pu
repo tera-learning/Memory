@@ -1,0 +1,78 @@
+@startuml
+title クラス図
+class "Texture" as Texture{
+    m_Width
+    m_Height
+    m_Buffer
+
+    GetWidth()
+    GetHeight()
+    GetSize()
+    GetTextureBuffer()
+}
+class "Sprite" as Sprite{
+    m_DrawPos
+    m_Texture
+
+    GetDrawPos()
+    GetTextureBuffer()
+    Draw()
+}
+
+class "ControlSprite" as ControlSprite{
+    update()
+}
+
+class "AddSprite" as AddSprite{
+    update()
+}
+
+class "DeleteSprite" as DeleteSprite{
+    update()
+}
+
+class "MoveSprite" as MoveSprite{
+    update()
+}
+
+class "DrawManager" as DrawManager{
+    m_SpriteList
+
+    Create()
+    Render()
+    UpdateWindow()
+    UpdateSpriteList()
+}
+
+class "SpriteControllerKeyBinding" as SpriteControllerKeyBinding{
+    CreateController()
+}
+
+class "DebugMenu" as DebugMenu{
+    Create()
+    ExecDisp()
+}
+
+class "FrameRate" as FrameRate{
+    StartMeasureTime()
+    IncrFrame()
+    GetFrameRate()
+}
+
+AddSprite --> Sprite
+DeleteSprite --> Sprite
+MoveSprite --> Sprite
+DrawManager --> ControlSprite : use >
+DrawManager --> SpriteControllerKeyBinding : use >
+DrawManager o-- Sprite
+DrawManager o-- DebugMenu
+DrawManager o-- FrameRate
+Sprite o-- Texture
+ControlSprite <|-- AddSprite
+ControlSprite <|-- DeleteSprite
+SpriteControllerKeyBinding --> AddSprite
+SpriteControllerKeyBinding --> DeleteSprite
+SpriteControllerKeyBinding --> MoveSprite
+
+
+@enduml
