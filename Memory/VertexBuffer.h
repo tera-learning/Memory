@@ -4,6 +4,7 @@
 struct Vertex {
 	float pos[2];
 	float tex[2];
+	float col[4];
 };
 
 class VertexBuffer final

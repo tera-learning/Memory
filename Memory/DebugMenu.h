@@ -19,8 +19,6 @@ class DebugMenu
 private:
 	int m_CharacterTextureHorizontalNum = 16;
 	int m_CharacterTextureVerticalNum = 8;
-	int m_DispMenuOffsetX = 20;
-	int m_DispMenuOffsetY = 20;
 
 	Texture m_TextureImage;
 	VertexBuffer m_Vertex;
@@ -29,6 +27,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_SamplerState;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_VertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_ConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> m_BlendState;
 
 public:
 	DebugMenu();
@@ -37,9 +36,8 @@ public:
 	/* virtual */ ~DebugMenu();
 
 	HRESULT Create(const Microsoft::WRL::ComPtr<ID3D11Device>& device);
-	void ExecDisp(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& dContext, const DebugMenuLineup& lineup ) const;
-	void ExecDispString(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& dContext, const std::string& str, int line) const;
+	void ExecDispString(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& dContext, const std::string& str, int x, int y) const;
 	CRect GetRectCharacterTexture(int asciicode) const;
-	CPoint GetDispPointCharacterTexture(int x, int y) const;
+	CPoint GetDispPointCharacterTexture(int x, int y, int charactorNo) const;
 };
 

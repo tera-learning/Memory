@@ -10,72 +10,72 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddSprite.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="ControlSprite.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="DebugMenu.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="DeleteSprite.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="DrawManager.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="FrameRate.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="MoveSprite.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="SpriteControllerKeyBinding.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="VertexBuffer.cpp">
-      <Filter>ヘッダファイル</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ControlSprite.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugMenu.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DeleteSprite.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawManager.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameRate.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveSprite.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteControllerKeyBinding.h">
-      <Filter>ソースファイル</Filter>
-    </ClInclude>
     <ClInclude Include="VertexBuffer.h">
-      <Filter>ソースファイル</Filter>
+      <Filter>ヘッダファイル</Filter>
     </ClInclude>
     <ClInclude Include="AddSprite.h">
-      <Filter>ソースファイル</Filter>
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlSprite.h">
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugMenu.h">
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteSprite.h">
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawManager.h">
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameRate.h">
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveSprite.h">
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteControllerKeyBinding.h">
+      <Filter>ヘッダファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>ヘッダファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -16,12 +16,14 @@ struct vertexInput
 {
     float2 pos : POSITION;
     float2 tex : TEXCOORD0;
+    float4 col : COLOR0;
 };
 
 struct vertexOutput
 {
     float4 pos : SV_POSITION;
     float2 tex : TEXCOORD0;
+    float4 col : COLOR0;
 };
 
 ///////////////////////////////////////////////////////
@@ -43,6 +45,7 @@ vertexOutput vs_main(vertexInput inData)
     outData.pos[3] = 1.0f;
     
     outData.tex = inData.tex;
+    outData.col = inData.col;
     
     return outData;
 }

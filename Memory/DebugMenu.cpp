@@ -120,21 +120,31 @@ HRESULT DebugMenu::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& device)
 	if (FAILED(hresult))
 		return hresult;
 
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//ブレンドステートの設定
+	//////////////////////////////////////////////////////////////////////////////////
+	D3D11_BLEND_DESC BlendDesc;
+	ZeroMemory( &BlendDesc, sizeof( BlendDesc ) );
+
+	BlendDesc.AlphaToCoverageEnable = FALSE;
+	BlendDesc.IndependentBlendEnable = FALSE;
+	BlendDesc.RenderTarget[0].BlendEnable = TRUE;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	hresult = device->CreateBlendState( &BlendDesc, &m_BlendState );
+
+	
 	return hresult;
 }
 
-void DebugMenu::ExecDisp(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& dContext, const DebugMenuLineup& lineup) const
-{
-	std::string title = "< DebugDisp >";
-	std::string strSpriteNum = "  SpriteNum : " + std::to_string(lineup.m_SpriteNum);
-	std::string strFrameRate = "  FrameRate : " + std::to_string(lineup.m_FrameRate);
-
-	ExecDispString(hwnd, dContext, title, 0);
-	ExecDispString(hwnd, dContext, strSpriteNum, 1);
-	ExecDispString(hwnd, dContext, strFrameRate, 2);
-}
-
-void DebugMenu::ExecDispString(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& dContext, const std::string& str, int line) const
+void DebugMenu::ExecDispString(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& dContext, const std::string& str, int x, int y) const
 {
 
 	UINT strides = sizeof(Vertex);
@@ -146,11 +156,13 @@ void DebugMenu::ExecDispString(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11Dev
 	GetClientRect(hwnd, &rect);
 	center = rect.CenterPoint();
 
+	float blendFactor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+
 	for (unsigned int i = 0; i < str.size(); i++)
 	{
 
 		//文字表示位置を取得
-		CPoint charDispPoint = GetDispPointCharacterTexture(i, line);
+		CPoint charDispPoint = GetDispPointCharacterTexture(x, y, i);
 
 		//表示する文字のテクスチャ上の位置を取得する
 		CRect charTexRect = GetRectCharacterTexture(str[i]);
@@ -172,10 +184,10 @@ void DebugMenu::ExecDispString(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11Dev
 
 
 		VertexBuffer v;
-		v.AddVertex({ {0.0f, 0.0f}, {left, top} });
-		v.AddVertex({ {1.0f, 0.0f}, {right, top} });
-		v.AddVertex({ {0.0f, 1.0f}, {left, bottom} });
-		v.AddVertex({ {1.0f, 1.0f}, {right, bottom} });
+		v.AddVertex({ {0.0f, 0.0f}, {left, top}, {1.0f, 0.0f, 0.0f, 0.0f} });
+		v.AddVertex({ {1.0f, 0.0f}, {right, top}, {1.0f, 0.0f, 0.0f, 0.0f} });
+		v.AddVertex({ {0.0f, 1.0f}, {left, bottom}, {1.0f, 0.0f, 0.0f, 0.0f} });
+		v.AddVertex({ {1.0f, 1.0f}, {right, bottom}, {1.0f, 0.0f, 0.0f, 0.0f} });
 
 		D3D11_MAPPED_SUBRESOURCE msr;
 		dContext->Map(m_VertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
@@ -190,7 +202,8 @@ void DebugMenu::ExecDispString(HWND hwnd, const Microsoft::WRL::ComPtr<ID3D11Dev
 		dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);				//頂点バッファがどの順番で三角形を作るか
 		dContext->PSSetSamplers(0, 1, m_SamplerState.GetAddressOf());							//サンプラーの設定
 		dContext->VSSetConstantBuffers(0, 1, m_ConstantBuffer.GetAddressOf());					//定数バッファの設定	
-		dContext->UpdateSubresource(m_ConstantBuffer.Get(), 0, nullptr, &constantBuffer, 0, 0);			//定数バッファの更新
+		dContext->UpdateSubresource(m_ConstantBuffer.Get(), 0, nullptr, &constantBuffer, 0, 0);	//定数バッファの更新
+		dContext->OMSetBlendState( m_BlendState.Get(), blendFactor, 0xffffffff );				//アルファブレンドの設定
 		dContext->Draw(4, 0);																	//描画する
 	}
 }
@@ -212,15 +225,14 @@ CRect DebugMenu::GetRectCharacterTexture(int asciicode) const
 	return rect;
 }
 
-CPoint DebugMenu::GetDispPointCharacterTexture(int x, int y) const
+CPoint DebugMenu::GetDispPointCharacterTexture(int x, int y, int charctorNo) const
 {
 	CPoint point;
 
 	float unitWidth = static_cast<float>(m_TextureImage.GetWidth()) / m_CharacterTextureHorizontalNum;
-	float unitHeight = static_cast<float>(m_TextureImage.GetHeight()) / m_CharacterTextureVerticalNum;
 
-	point.x = m_DispMenuOffsetX + static_cast<int>((x * unitWidth));
-	point.y = m_DispMenuOffsetY + static_cast<int>((y * unitHeight));
+	point.x = x + static_cast<int>((charctorNo * unitWidth));
+	point.y = y;
 
 	return point;
 }

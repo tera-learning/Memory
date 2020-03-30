@@ -8,6 +8,11 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 
+extern unsigned int totalAllocatedNum ;
+extern unsigned int currentAllocatedNum ;
+extern std::size_t totalMemorySize ;
+extern std::size_t peakMemorySize ;
+
 HRESULT DrawManager::Create(HWND hwnd)
 {
 
@@ -100,10 +105,10 @@ HRESULT DrawManager::Create(HWND hwnd)
 	//////////////////////////////////////////////////////////////////////////////////
 	//頂点バッファの生成
 	//////////////////////////////////////////////////////////////////////////////////
-	m_Vertex.AddVertex({ {0.0f, 0.0f}, {0.0f, 0.0f} });
-	m_Vertex.AddVertex({ {1.0f, 0.0f}, {1.0f, 0.0f} });
-	m_Vertex.AddVertex({ {0.0f, 1.0f}, {0.0f, 1.0f} });
-	m_Vertex.AddVertex({ {1.0f, 1.0f}, {1.0f, 1.0f} });
+	m_Vertex.AddVertex({ {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f} });
+	m_Vertex.AddVertex({ {1.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f} });
+	m_Vertex.AddVertex({ {0.0f, 1.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 0.0f} });
+	m_Vertex.AddVertex({ {1.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 0.0f} });
 
 	D3D11_BUFFER_DESC bufferDesc;
 
@@ -168,6 +173,7 @@ HRESULT DrawManager::Create(HWND hwnd)
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] = {
 		{ "POSITION",	0, DXGI_FORMAT_R32G32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0,	D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	hresult = m_Device->CreateInputLayout(
@@ -346,8 +352,27 @@ void DrawManager::Render(HWND hwnd)
 	m_FrameRate.IncrFrame();
 
 	// デバッグメニュー表示
-	DebugMenuLineup lineup{m_FrameRate.GetFrameRate(), m_SpriteList.size()};
-	m_DebugMenu.ExecDisp(hwnd, m_Context, lineup);
+	std::string title = "< DebugDisp >";
+	std::string strSpriteNum = "  SpriteNum : " + std::to_string(m_SpriteList.size());
+	std::string strFrameRate = "  FrameRate : " + std::to_string(m_FrameRate.GetFrameRate());
+	std::string strTotalNewCount = "  TotalAllocatedCount : " + std::to_string(totalAllocatedNum);
+	std::string strCurrentNewNum = "  CurrentAllocatedNum : " + std::to_string(currentAllocatedNum);
+	std::string strUsedMemorySize = "  TotalMemorySize : " + std::to_string(totalMemorySize);
+	std::string strPeakMemorySize = "  PeakMemorySize : " + std::to_string(peakMemorySize);
+	std::string strOneFrameTime = "  OneFrameTime [microsecond]: " + std::to_string(m_FrameRate.GetOneFrameTime());
+	std::string strMaxOneFrameTime = "  MaxOneFrameTime [microsecond]: " + std::to_string(m_FrameRate.GetMaxOneFrameTime());
+	std::string strPangram = "  Pangram: The quick brown fox jumps over the lazy dog.";
+
+	m_DebugMenu.ExecDispString(hwnd, m_Context, title, 20, 20);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strSpriteNum, 20, 40);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strFrameRate, 20, 60);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strTotalNewCount, 20, 80);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strCurrentNewNum, 20, 100);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strUsedMemorySize, 20, 120);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strPeakMemorySize, 20, 140);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strOneFrameTime, 20, 160);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strMaxOneFrameTime, 20, 180);
+	m_DebugMenu.ExecDispString(hwnd, m_Context, strPangram, 20, 200);
 	m_Swapchain->Present(0, 0);
 }
 

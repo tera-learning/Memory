@@ -3,7 +3,62 @@
 #include <Windows.h>
 
 DrawManager dx11Manager;
+unsigned int totalAllocatedNum = 0;
+unsigned int currentAllocatedNum = 0;
+std::size_t totalMemorySize = 0;
+std::size_t peakMemorySize = 0;
+const std::size_t memoryHeader = 16;
 
+void* operator new(std::size_t n)
+{
+	//割り当てた合計数(Newされた数)
+	totalAllocatedNum++;
+	//現在割り当ててる数(現在確保されている数)
+	currentAllocatedNum++;
+
+	std::size_t allocateSize = n + memoryHeader;
+
+	//合計使用メモリ量
+	totalMemorySize += allocateSize;
+	//ピーク時の使用メモリ量
+	peakMemorySize = (totalMemorySize > peakMemorySize) ? totalMemorySize : peakMemorySize;
+	
+	//メモリ確保
+	void* p = std::malloc(allocateSize);
+	char* memory = nullptr;
+
+	if (p != nullptr)
+	{
+		//メモリに確保した容量を保持しておく
+		*(static_cast<std::size_t*>(p)) = n;
+		//実際に使用する領域を返す
+		memory = static_cast<char *>(p) + memoryHeader;
+	}
+	
+	return memory;
+}
+
+void operator delete(void* ptr)
+{
+	if (ptr != nullptr)
+	{
+		void* ptrHeader = static_cast<char *>(ptr) - memoryHeader;
+		char* memory = static_cast<char *>(ptrHeader);
+
+		if (memory != nullptr)
+		{
+			//Newしたときに確保したサイズを取得
+			std::size_t size = *(static_cast<std::size_t*>(ptrHeader));
+			//合計使用メモリ量から差し引く
+			totalMemorySize -= (size + memoryHeader);
+			//現在割り当ててる数からひく
+			currentAllocatedNum--;
+
+			//メモリ領域解放
+			std::free(memory);
+		}
+	}
+}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
